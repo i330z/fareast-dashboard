@@ -1,6 +1,24 @@
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Geist, Geist_Mono } from "next/font/google";
+import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
+import { AppSidebar } from '@/components/AppSidebar';
 import "./globals.css";
+
+
+
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
+
+
+
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,10 +41,45 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset>
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b">
+              <div className="flex items-center gap-2 px-3">
+                <SidebarTrigger />
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                <Breadcrumb>
+                  <BreadcrumbList>
+                    <BreadcrumbItem className="hidden md:block">
+                      <BreadcrumbLink href="#">
+                        Building Your Application
+                      </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator className="hidden md:block" />
+                    <BreadcrumbItem>
+                      <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                    </BreadcrumbItem>
+                  </BreadcrumbList>
+                </Breadcrumb>
+              </div>
+            </header>
 
-        {children}
-        </AuthProvider>
+            {/* Render app pages here */}
+            <AuthProvider>
+              <main className="p-4">
+                {children}
+              </main>
+            </AuthProvider>
+
+          </SidebarInset>
+        
+          {/* <AuthProvider>
+            <main>
+              <AppSidebar />
+              {children}
+            </main>
+          </AuthProvider> */}
+        </SidebarProvider>
       </body>
     </html>
   );
