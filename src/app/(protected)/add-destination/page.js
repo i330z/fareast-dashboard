@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Trash2, MapPin, Phone, Mail, Home, Star, Navigation, Calendar, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +22,7 @@ export default function TravelPackageForm() {
         packageOverview: '',
         state: '',
         district: '',
-        images: [],
+        images: [], // will store { file, url }
         itinery: [{ day: '', title: '', desc: '' }],
         locationAddress: {
             address: '',
@@ -41,12 +41,43 @@ export default function TravelPackageForm() {
 
     // will change the structure later 
 
-    const states = {
-        Assam: ["Guwahati", "Jorhat", "Dibrugarh"],
-        Maharashtra: ["Mumbai", "Pune", "Nagpur"],
-        Karnataka: ["Bengaluru", "Mysuru", "Mangaluru"],
-    };
+    const northEastStates = [
+      {
+        stateName: "Assam",
+        stateDescription: "",
+        stateImageFile: null,
+        districts: [
+          { name: "Kamrup", description: "", hasImage: false },
+          { name: "Dibrugarh", description: "", hasImage: false },
+          { name: "Nagaon", description: "", hasImage: false }
+        ]
+      },
+      {
+        stateName: "Arunachal Pradesh",
+        stateDescription: "",
+        stateImageFile: null,
+        districts: [
+          { name: "Tawang", description: "", hasImage: false },
+          { name: "Papum Pare", description: "", hasImage: false },
+          { name: "East Siang", description: "", hasImage: false }
+        ]
+      },
+      {
+        stateName: "Manipur",
+        stateDescription: "",
+        stateImageFile: null,
+        districts: [
+          { name: "Imphal West", description: "", hasImage: false },
+          { name: "Thoubal", description: "", hasImage: false },
+          { name: "Churachandpur", description: "", hasImage: false }
+        ]
+      }
+    ];
 
+    const getDistrictsForState = (stateName) => {
+      const s = northEastStates.find(st => st.stateName === stateName);
+      return s ? s.districts.map(d => d.name) : [];
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -118,6 +149,42 @@ export default function TravelPackageForm() {
         }));
     };
 
+    // New: image upload / preview / delete handlers
+    const handleImageUpload = (e) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length === 0) return;
+
+        const newImages = files.map(file => ({
+            file,
+            url: URL.createObjectURL(file)
+        }));
+
+        setFormData(prev => ({
+            ...prev,
+            images: [...prev.images, ...newImages]
+        }));
+
+        // clear the input value so same file can be selected again if needed
+        e.target.value = "";
+    };
+
+    const removeImage = (index) => {
+        setFormData(prev => {
+            const toRemove = prev.images[index];
+            if (toRemove?.url) URL.revokeObjectURL(toRemove.url);
+            const images = prev.images.filter((_, i) => i !== index);
+            return { ...prev, images };
+        });
+    };
+
+    // cleanup object URLs on unmount
+    useEffect(() => {
+        return () => {
+            formData.images.forEach(img => img?.url && URL.revokeObjectURL(img.url));
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('Form submitted:', formData);
@@ -180,7 +247,7 @@ export default function TravelPackageForm() {
                                             className="border-blue-200 focus:border-blue-500"
                                         /> */}
                                         <Select
-                                        
+                                            value={formData.state}
                                             onValueChange={(value) =>
                                                 setFormData((prev) => ({ ...prev, state: value, district: "" }))
                                             }
@@ -189,9 +256,9 @@ export default function TravelPackageForm() {
                                                 <SelectValue placeholder="Select a state" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {Object.keys(states).map((state) => (
-                                                    <SelectItem key={state} value={state}>
-                                                        {state}
+                                                {northEastStates.map((st) => (
+                                                    <SelectItem key={st.stateName} value={st.stateName}>
+                                                        {st.stateName}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -202,14 +269,21 @@ export default function TravelPackageForm() {
                                         <Label htmlFor="district" className="text-gray-800 font-medium">
                                             District
                                         </Label>
-                                        <Input
-                                            id="district"
-                                            name="district"
+                                        <Select
                                             value={formData.district}
-                                            onChange={handleInputChange}
-                                            placeholder="e.g., Alleppey"
-                                            className="border-blue-200 focus:border-blue-500"
-                                        />
+                                            onValueChange={(value) => setFormData(prev => ({ ...prev, district: value }))}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder={formData.state ? "Select a district" : "Select state first"} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {getDistrictsForState(formData.state).map((d) => (
+                                                    <SelectItem key={d} value={d}>
+                                                        {d}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                 </div>
 
@@ -535,6 +609,49 @@ export default function TravelPackageForm() {
 
 
                             </aside>
+
+                            {/* Image upload section (full width at the end of the form) */}
+                            <div className="md:col-span-3 space-y-4">
+                                <h3 className="text-lg font-semibold text-gray-800">Upload Images</h3>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="packageImages">Add Images</Label>
+                                    <input
+                                        id="packageImages"
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={handleImageUpload}
+                                        className="block w-full text-sm text-gray-600 file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:rounded file:text-blue-700"
+                                    />
+                                </div>
+
+                                {formData.images.length > 0 && (
+                                    <div>
+                                        <Label>Preview</Label>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 mt-2">
+                                            {formData.images.map((img, idx) => (
+                                                <div key={idx} className="relative border rounded overflow-hidden">
+                                                    <img
+                                                        src={img.url}
+                                                        alt={`upload-preview-${idx}`}
+                                                        className="object-cover w-full h-28"
+                                                    />
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        onClick={() => removeImage(idx)}
+                                                        className="absolute top-1 right-1 bg-white/60 hover:bg-white"
+                                                    >
+                                                        <Trash2 className="h-4 w-4 text-red-600" />
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
                         </form>
                     </CardContent>
                 </Card>
