@@ -8,6 +8,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 export default function TravelPackageForm() {
     const [formData, setFormData] = useState({
@@ -31,6 +38,15 @@ export default function TravelPackageForm() {
         isTopDestination: true,
         cardHighlight: ['']
     });
+
+    // will change the structure later 
+
+    const states = {
+        Assam: ["Guwahati", "Jorhat", "Dibrugarh"],
+        Maharashtra: ["Mumbai", "Pune", "Nagpur"],
+        Karnataka: ["Bengaluru", "Mysuru", "Mangaluru"],
+    };
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -111,7 +127,7 @@ export default function TravelPackageForm() {
     return (
         <div className="min-h-screen">
             <div className="max-w-7xl mx-auto">
-                    <h2 className='text-2xl'>Create Package</h2>
+                <h2 className='text-2xl'>Create Package</h2>
                 <Card className=" border-0">
                     <CardContent className="p-6">
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -155,14 +171,31 @@ export default function TravelPackageForm() {
                                         <Label htmlFor="state" className="text-gray-800 font-medium">
                                             State
                                         </Label>
-                                        <Input
+                                        {/* <Input
                                             id="state"
                                             name="state"
                                             value={formData.state}
                                             onChange={handleInputChange}
                                             placeholder="e.g., Kerala"
                                             className="border-blue-200 focus:border-blue-500"
-                                        />
+                                        /> */}
+                                        <Select
+                                        
+                                            onValueChange={(value) =>
+                                                setFormData((prev) => ({ ...prev, state: value, district: "" }))
+                                            }
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select a state" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {Object.keys(states).map((state) => (
+                                                    <SelectItem key={state} value={state}>
+                                                        {state}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </div>
 
                                     <div className="space-y-2">
