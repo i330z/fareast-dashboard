@@ -48,42 +48,32 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Destinations",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Create Package",
+          url: "/add-destination",
         },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
+        
       ],
     },
     {
-      title: "Models",
+      title: "States/Districts",
       url: "#",
       icon: Bot,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "States",
+          url: "/states",
         },
         {
-          title: "Explorer",
-          url: "#",
+          title: "Districts",
+          url: "/districts",
         },
-        {
-          title: "Quantum",
-          url: "#",
-        },
+      
       ],
     },
     {
