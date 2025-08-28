@@ -5,3 +5,4 @@ export const db = getFirestore(app)
 
 export const usersRef = collection(db, "Users")
 export const sitesRef = collection(db, "Sites")
+export const destinationRef = collection(db, "Destinations")

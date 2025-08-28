@@ -5,12 +5,12 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDXf_apyT1OVdJlWrupqS9FCYdPGjWmYZw",
-  authDomain: "travel-saas-326c2.firebaseapp.com",
-  projectId: "travel-saas-326c2",
-  storageBucket: "travel-saas-326c2.firebasestorage.app",
-  messagingSenderId: "578747549375",
-  appId: "1:578747549375:web:7efe5ea31b2ea74c10e80a"
+  apiKey: "AIzaSyC7uYlBxbkYlfIffx3XoUsCQsskwOWRa6c",
+  authDomain: "fareast-9fc98.firebaseapp.com",
+  projectId: "fareast-9fc98",
+  storageBucket: "fareast-9fc98.firebasestorage.app",
+  messagingSenderId: "1054067782086",
+  appId: "1:1054067782086:web:8871b1f8626873a49402c7"
 };
 
 // Initialize Firebase

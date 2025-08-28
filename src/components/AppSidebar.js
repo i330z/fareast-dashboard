@@ -57,6 +57,10 @@ const data = {
           title: "Create Package",
           url: "/add-destination",
         },
+        {
+          title: "Destinations",
+          url: "/destinations",
+        },
         
       ],
     },
