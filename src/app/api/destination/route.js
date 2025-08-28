@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { destinationRef } from "@/lib/database";
-import { doc, serverTimestamp, setDoc, getDocs } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc, getDocs, getDoc } from "firebase/firestore";
 
 
 export async function POST(req) {
@@ -27,15 +27,29 @@ export async function POST(req) {
 
 
 
-export async function GET() {
+export async function GET(req) {
     try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
+        if(id){
+            const docRef = doc(destinationRef, id);
+            const docSnap = await getDoc(docRef);
 
-        const querySnapshot = await getDocs(destinationRef);
-        const destinations = querySnapshot.docs.map(doc => doc.data());
-        console.log(destinations);
-        return NextResponse.json({ destinations }, { status: 200 });
+            if(!docSnap.exists()){
+                return NextResponse.json({ message: "Destination not found" }, { status: 404 });    
+            }
+
+            return NextResponse.json({ destination: docSnap.data() }, { status: 200 });
+        }else{
+
+            const querySnapshot = await getDocs(destinationRef);
+            const destinations = querySnapshot.docs.map(doc => doc.data());
+            console.log(destinations);
+            return NextResponse.json({ destinations }, { status: 200 });
+        }
     } catch (error) {
         console.log(error);
         return NextResponse.json({ message: "Error" }, { status: 500 });
     }
 }
+

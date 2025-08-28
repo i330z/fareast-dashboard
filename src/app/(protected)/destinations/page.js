@@ -4,8 +4,11 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Separator } from '@/components/ui/separator'
 import { DataTable } from '@/components/DataTable'
+import { useRouter } from 'next/navigation'
+import { Edit, Trash } from "lucide-react" 
 
 function page() {
+  const router = useRouter()
   const columns = [
     {
       accessorKey: 'title',
@@ -15,10 +18,7 @@ function page() {
       accessorKey: 'address',
       header: 'Address',
     },
-    {
-      accessorKey: 'content',
-      header: 'Address',
-    },
+    
     {
       accessorKey: 'phone',
       header: 'Phone',
@@ -26,6 +26,31 @@ function page() {
     {
       accessorKey: 'email',
       header: 'Email',
+    },
+    {
+      id: "actions", // special column id
+      header: "Actions",
+      cell: ({ row }) => {
+        const rowData = row.original // access full row data here
+        return (
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push(`/destinations/edit/${rowData.id}`)}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => console.log("Delete:", rowData.id)}
+            >
+              <Trash className="h-4 w-4" />
+            </Button>
+          </div>
+        )
+      },
     },
   ]
 

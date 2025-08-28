@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 
-export default function SimpleEditor({ onChange }) {
+export default function SimpleEditor({ onChange, text }) {
     const editorRef = useRef(null);
     const quillRef = useRef(null);
 
@@ -14,7 +14,7 @@ export default function SimpleEditor({ onChange }) {
                 placeholder: "Write something here...",
                 modules: {
                     toolbar: [
-                        [{ header: [1, 2,3, false] }],
+                        [{ header: [1, 2, 3, false] }],
                         ["bold", "italic", "underline", "strike"],
                         [{ list: "ordered" }, { list: "bullet" }],
                         ["link", "image"],
@@ -29,6 +29,13 @@ export default function SimpleEditor({ onChange }) {
             });
         }
     }, []);
+
+
+    useEffect(() => {
+        if (quillRef.current && text !== undefined) {
+            quillRef.current.clipboard.dangerouslyPasteHTML(text);
+        }
+    }, [text]);
 
     return (
         <div className="py-2">
