@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { destinationRef } from "@/lib/database";
-import { doc, serverTimestamp, setDoc, getDocs, getDoc, updateDoc } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc, getDocs, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 
 
 export async function POST(req) {
@@ -44,7 +44,6 @@ export async function GET(req) {
 
             const querySnapshot = await getDocs(destinationRef);
             const destinations = querySnapshot.docs.map(doc => doc.data());
-            console.log(destinations);
             return NextResponse.json({ destinations }, { status: 200 });
         }
     } catch (error) {
@@ -67,5 +66,19 @@ export async function PUT(req) {
         return NextResponse.json({ message: "Destination updated successfully" }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ message: "Error updating the document" }, { status: 500 });
+    }
+}
+
+
+export async function DELETE(req) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
+        const docRef =  doc(destinationRef, id);
+        await deleteDoc(docRef);
+        return NextResponse.json({ message: "Destination deleted successfully" }, { status: 200 });
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json({ message: "Error deleting the document" }, { status: 500 });
     }
 }

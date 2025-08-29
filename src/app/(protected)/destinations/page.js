@@ -7,8 +7,26 @@ import { DataTable } from '@/components/DataTable'
 import { useRouter } from 'next/navigation'
 import { Edit, Trash } from "lucide-react" 
 
+
 function page() {
   const router = useRouter()
+
+  const deleteDestination = async (id) => {
+    try {
+      if (!id) return
+      const res = await fetch(`/api/destination?id=${id}`, {
+        method: 'DELETE'
+      })
+      const data = await res.json()
+      console.log(data)
+      alert("Destination deleted successfully")
+      router.refresh()
+    } catch (error) {
+      console.log(error)
+      alert("Error deleting destination")
+    }
+  }
+
   const columns = [
     {
       accessorKey: 'title',
@@ -44,7 +62,7 @@ function page() {
             <Button
               variant="destructive"
               size="sm"
-              onClick={() => console.log("Delete:", rowData.id)}
+              onClick={() => deleteDestination(rowData.id)}
             >
               <Trash className="h-4 w-4" />
             </Button>
