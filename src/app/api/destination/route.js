@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { destinationRef } from "@/lib/database";
-import { doc, serverTimestamp, setDoc, getDocs, getDoc } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc, getDocs, getDoc, updateDoc } from "firebase/firestore";
 
 
 export async function POST(req) {
@@ -53,3 +53,19 @@ export async function GET(req) {
     }
 }
 
+export async function PUT(req) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
+        const body = await req.json();
+
+        const docRef =  doc(destinationRef, id);
+        await updateDoc(docRef, {
+            ...body,
+            updatedAt: serverTimestamp()
+        })
+        return NextResponse.json({ message: "Destination updated successfully" }, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ message: "Error updating the document" }, { status: 500 });
+    }
+}

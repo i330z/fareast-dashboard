@@ -33,9 +33,22 @@ export default function SimpleEditor({ onChange, text }) {
 
     useEffect(() => {
         if (quillRef.current && text !== undefined) {
-            quillRef.current.clipboard.dangerouslyPasteHTML(text);
+            const editor = quillRef.current;
+
+            // only replace content if it's different from current
+            const currentText = editor.root.innerHTML;
+            if (currentText !== text) {
+                const selection = editor.getSelection();
+                editor.clipboard.dangerouslyPasteHTML(text);
+                if (selection) {
+                    editor.setSelection(selection.index, selection.length);
+                }
+            }
         }
     }, [text]);
+
+
+
 
     return (
         <div className="py-2">
