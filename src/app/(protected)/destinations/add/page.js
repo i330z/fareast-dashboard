@@ -1,7 +1,9 @@
 "use client"
 import SimpleEditor from '@/components/Editor';
+import FileUploadComponent from '@/components/FileUploadComponent';
 import { Input } from '@/components/ui/input';
 import { useState, useRef } from 'react'
+import { X } from "lucide-react";
 
 function Page() {
 
@@ -20,26 +22,23 @@ function Page() {
         setFormData((prev) => ({ ...prev, [field]: value }))
     }
 
-    // uploadImages is a standalone function so it can be extracted to a component later
-    const uploadImages = (files) => {
-        // files: File[]
-        const uploaded = files.map((file, idx) => ({
-            id: `${Date.now()}-${idx}`,
-            file,
-            url: URL.createObjectURL(file),
-            name: file.name
-        }))
-        return uploaded
-    }
 
-    const handleImageChange = (e) => {
-        const files = Array.from(e.target.files || [])
-        if (files.length === 0) return
-        const uploaded = uploadImages(files)
-        setFormData(prev => ({ ...prev, images: [...prev.images, ...uploaded] }))
-        // Reset input so same file can be selected again if needed
-        if (fileInputRef.current) fileInputRef.current.value = ""
-    }
+    const handleFileUpload = (fileObj) => {
+        console.log("File uploaded Object:", fileObj);
+        setFormData((prev) => ({
+            ...prev,
+            images: [...prev.images, fileObj],
+        }));
+    };
+
+    // const handleImageChange = (e) => {
+    //     const files = Array.from(e.target.files || [])
+    //     if (files.length === 0) return
+    //     const uploaded = uploadImages(files)
+    //     setFormData(prev => ({ ...prev, images: [...prev.images, ...uploaded] }))
+    //     // Reset input so same file can be selected again if needed
+    //     if (fileInputRef.current) fileInputRef.current.value = ""
+    // }
 
     const removeImage = (id) => {
         setFormData(prev => {
@@ -94,7 +93,7 @@ function Page() {
                                 </button>
                             </div>
 
-                            {/* <pre className='mt-4 text-xs bg-slate-100 p-3 rounded text-slate-700 overflow-auto'>{JSON.stringify(formData, null, 2)}</pre> */}
+                            <pre className='mt-4 text-xs bg-slate-100 p-3 rounded text-slate-700 overflow-auto'>{JSON.stringify(formData, null, 2)}</pre>
                         </div>
                     </div>
 
@@ -123,45 +122,39 @@ function Page() {
                                 <span className='text-sm font-medium text-slate-700'>Email</span>
                                 <Input placeholder="Email address" value={formData.email} onChange={(e) => handleChange("email", e.target.value)} className="mt-2" />
                             </label>
-
                             <div>
-                                <span className='text-sm font-medium text-slate-700'>Images</span>
-                                <div className='mt-2 border-dashed border-2 border-slate-200 rounded-md p-3 bg-slate-50'>
-                                    <div className='flex items-center justify-between gap-2'>
-                                        <div className='text-sm text-slate-500'>Upload multiple images (jpg, png)</div>
-                                        <button type="button" onClick={() => fileInputRef.current?.click()} className='px-3 py-1 text-sm bg-white border rounded-md hover:shadow-sm'>
-                                            Choose
-                                        </button>
-                                    </div>
-                                    <input
-                                        ref={fileInputRef}
-                                        type="file"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={handleImageChange}
-                                        className='hidden'
-                                    />
-                                    <div className='mt-3'>
-                                        {/* images grid */}
-                                        {formData.images.length === 0 ? (
-                                            <div className='text-xs text-slate-400'>No images uploaded yet.</div>
-                                        ) : (
-                                            <div className='grid grid-cols-3 gap-2'>
-                                                {formData.images.map(img => (
-                                                    <div key={img.id} className='relative group rounded overflow-hidden border'>
-                                                        <img src={img.url} alt={img.name} className='w-full h-20 object-cover' />
-                                                        <button type="button" onClick={() => removeImage(img.id)} className='absolute top-1 right-1 bg-black/60 text-white text-xs rounded px-1 hidden group-hover:block'>
-                                                            Remove
-                                                        </button>
-                                                        <div className='absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent text-white text-xs p-1'>
-                                                            {img.name}
-                                                        </div>
-                                                    </div>
-                                                ))}
+                                <FileUploadComponent onUploadSuccess={handleFileUpload} />
+                                {formData.images.length > 0 && (
+                                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                        {formData.images.map((img) => (
+                                            <div
+                                                key={img.id}
+                                                className="relative group border rounded-lg overflow-hidden"
+                                            >
+                                                {/* Preview Image */}
+                                                <img
+                                                    src={img.url}
+                                                    alt={img.name}
+                                                    className="w-full h-32 object-cover"
+                                                />
+
+                                                {/* Remove Button */}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(img.id)}
+                                                    className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full transition"
+                                                >
+                                                    <X size={16} />
+                                                </button>
+
+                                                {/* File Name Overlay */}
+                                                <div className="absolute bottom-0 left-0 w-full bg-black/40 text-white text-[10px] px-2 py-1 truncate">
+                                                    {img.name}
+                                                </div>
                                             </div>
-                                        )}
+                                        ))}
                                     </div>
-                                </div>
+                                )}
                             </div>
                         </div>
                     </div>
