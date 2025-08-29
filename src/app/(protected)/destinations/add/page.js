@@ -2,6 +2,7 @@
 import SimpleEditor from '@/components/Editor';
 import FileUploadComponent from '@/components/FileUploadComponent';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { useState, useRef } from 'react'
 import { X } from "lucide-react";
 
@@ -13,6 +14,7 @@ function Page() {
         address: "",
         phone: "",
         email: "",
+        isFeatured: false,
         images: [] // { id, file, url, name }
     })
 
@@ -84,6 +86,17 @@ function Page() {
                                 <span className='text-sm font-medium text-slate-700'>Content</span>
                                 <div className='mt-2 bg-white border rounded-md'>
                                     <SimpleEditor onChange={(value) => handleChange("content", value)} />
+                                </div>
+                            </div>
+                            <div className='pt-2'>
+                                <div className="flex items-center justify-between">
+                                    <span className='text-sm font-medium text-slate-700'>Featured(Home Page)</span>
+                                    <Switch
+                                        id="notifications"
+                                        checked={formData.notifications}
+                                        onCheckedChange={(checked) => handleChange("isFeatured", checked)
+                                        }
+                                    />
                                 </div>
                             </div>
 
