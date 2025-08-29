@@ -5,9 +5,11 @@ import { useState, useRef, useEffect } from 'react'
 import { useParams } from 'next/navigation';
 import FileUploadComponent from '@/components/FileUploadComponent';
 import { X } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 
 function Page() {
+    const router = useRouter()
     const { id } = useParams();
     console.log("Editing ID:", id)
 
@@ -92,6 +94,7 @@ function Page() {
         console.log(data)
 
         alert("Form data logged to console.")
+        router.push("/destinations")
     }
 
     return (

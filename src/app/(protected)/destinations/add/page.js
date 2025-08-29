@@ -5,9 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { useState, useRef } from 'react'
 import { X } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 function Page() {
-
+    const router = useRouter()
     const [formData, setFormData] = useState({
         title: "",
         content: "",
@@ -65,6 +66,7 @@ function Page() {
         console.log(data)
 
         alert("Form data logged to console.")
+        router.push("/destinations")
     }
 
     return (
