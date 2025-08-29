@@ -32,7 +32,7 @@ const FileUploadComponent = ({ onUploadSuccess }) => {
     };
 
     return (
-        <Card className="max-w-md mx-auto mt-10 rounded outline-dotted border-0">
+        <Card className="w-full mx-auto mt-10 rounded outline-dotted border-0">
             <CardHeader>
                 <CardTitle className="text-xl font-semibold flex items-center gap-2">
                     <Upload className="w-5 h-5 text-primary" />
