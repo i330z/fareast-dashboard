@@ -20,6 +20,12 @@ function Page() {
         address: "",
         phone: "",
         email: "",
+        isFeatured: false,
+        isPublished: false,
+        description: '',
+        slug: '',
+        category: '',
+        state: '',
         images: [] // { id, file, url, name }
     })
 
