@@ -1,9 +1,10 @@
-"use client";   
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { app } from "@/lib/firebaseInit";
+import Link from "next/link";
 
 export default function SignInPage() {
     const [email, setEmail] = useState("");
@@ -67,6 +68,10 @@ export default function SignInPage() {
                 >
                     Sign In
                 </button>
+                <div className="mt-4 text-center text-sm">
+                    Not Registered? 
+                    <Link href='/sign-up' className="pl-2 underline">Sign Up</Link>
+                </div>
             </form>
         </div>
     );

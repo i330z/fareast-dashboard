@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { app } from '@/lib/firebaseInit'; // Ensure firebase is initialized
+import Link from 'next/link';
 
 
 const auth = getAuth(app);
@@ -12,9 +13,9 @@ export default function SignUpPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    
+
     const router = useRouter();
-    
+
     const handleSignUp = async (e) => {
         e.preventDefault();
         setError('');
@@ -60,6 +61,10 @@ export default function SignUpPage() {
                 >
                     Sign Up
                 </button>
+                <div className="mt-4 text-center text-sm">
+                    Registered?
+                    <Link href='/sign-in' className='pl-2 underline'>Sign In</Link>
+                </div>
             </form>
             {error && <p className="text-red-600 mt-4 text-center">{error}</p>}
             {success && <p className="text-green-600 mt-4 text-center">{success}</p>}

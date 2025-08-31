@@ -54,7 +54,7 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "Create Package",
+          title: "Package",
           url: "/add-destination",
         },
         {
