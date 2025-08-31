@@ -17,6 +17,7 @@ function Page() {
         phone: "",
         email: "",
         isFeatured: false,
+        isPublished: false,
         description: '',
         slug: '',
         category: '',
@@ -42,12 +43,12 @@ function Page() {
     const slugRef = useRef('');
 
 
-    
+
 
     const handleChange = (field, value) => {
         setFormData((prev) => {
             if (field === "title") {
-                return { ...prev, title:value, slug: generateSlug(value) };
+                return { ...prev, title: value, slug: generateSlug(value) };
             }
             return { ...prev, [field]: value };
         })
@@ -114,15 +115,8 @@ function Page() {
                                 </div>
                             </div>
                             <div className='pt-2'>
-                                <div className="flex items-center justify-between">
-                                    <span className='text-sm font-medium text-slate-700'>Featured(Home Page)</span>
-                                    <Switch
-                                        id="notifications"
-                                        checked={formData.isFeatured}
-                                        onCheckedChange={(checked) => handleChange("isFeatured", checked)
-                                        }
-                                    />
-                                </div>
+
+
                             </div>
 
                             <div className='pt-2'>
@@ -138,6 +132,29 @@ function Page() {
                     {/* Right - sidebar with contact fields and image upload */}
                     <div className='md:col-span-4'>
                         <div className='bg-white rounded-lg shadow-sm p-4 space-y-4'>
+                            <div className='space-y-4 border border-slate-200 p-4 rounded bg-blue-50'>
+                                <h3 className='text-lg font-semibold text-slate-800'>Destination Actions</h3>
+                                <div className="flex items-center justify-between">
+                                    <span className='text-sm font-medium text-slate-700'>Publish Online</span>
+                                    <Switch
+                                        id="notifications"
+                                        checked={formData.isPublished}
+                                        onCheckedChange={(checked) => handleChange("isPublished", checked)
+                                        }
+                                    />
+                                </div>
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className='text-sm font-medium text-slate-700'>Featured(Home Page)</span>
+                                    <Switch
+                                        id="notifications"
+                                        checked={formData.isFeatured}
+                                        onCheckedChange={(checked) => handleChange("isFeatured", checked)
+                                        }
+                                    />
+                                </div>
+
+                            </div>
+
                             <h3 className='text-lg font-semibold text-slate-800'>Contact & Media</h3>
 
                             <label className='block'>
