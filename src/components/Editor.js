@@ -53,7 +53,7 @@ export default function SimpleEditor({ onChange, text }) {
     return (
         <div className="py-2">
             {/* <h2 className="text-lg font-semibold mb-2">Simple Quill Editor</h2> */}
-            <div ref={editorRef} className="h-40 bg-white" style={{ height: "300px" }}></div>
+            <div ref={editorRef} className="h-40 bg-white" style={{ height: "700px" }}></div>
         </div>
     );
 }

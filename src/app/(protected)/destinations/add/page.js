@@ -118,7 +118,7 @@ function Page() {
                                     <span className='text-sm font-medium text-slate-700'>Featured(Home Page)</span>
                                     <Switch
                                         id="notifications"
-                                        checked={formData.notifications}
+                                        checked={formData.isFeatured}
                                         onCheckedChange={(checked) => handleChange("isFeatured", checked)
                                         }
                                     />
@@ -131,7 +131,7 @@ function Page() {
                                 </button>
                             </div>
 
-                            {/* <pre className='mt-4 text-xs bg-slate-100 p-3 rounded text-slate-700 overflow-auto'>{JSON.stringify(formData, null, 2)}</pre> */}
+                            <pre className='mt-4 text-xs bg-slate-100 p-3 rounded text-slate-700 overflow-auto'>{JSON.stringify(formData, null, 2)}</pre>
                         </div>
                     </div>
 

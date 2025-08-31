@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import FileUploadComponent from '@/components/FileUploadComponent';
 import { X } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { Switch } from '@/components/ui/switch';
 
 
 function Page() {
@@ -114,6 +115,17 @@ function Page() {
                                 <span className='text-sm font-medium text-slate-700'>Content</span>
                                 <div className='mt-2 bg-white border rounded-md'>
                                     <SimpleEditor text={formData.content} onChange={(value) => handleChange("content", value)} />
+                                </div>
+                            </div>
+                               <div className='pt-2'>
+                                <div className="flex items-center justify-between">
+                                    <span className='text-sm font-medium text-slate-700'>Featured(Home Page)</span>
+                                    <Switch
+                                        id="notifications"
+                                        checked={formData.isFeatured}
+                                        onCheckedChange={(checked) => handleChange("isFeatured", checked)
+                                        }
+                                    />
                                 </div>
                             </div>
 

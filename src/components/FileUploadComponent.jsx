@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useFileUpload } from "../hooks/useFileUpload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,8 @@ import { Upload, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 const FileUploadComponent = ({ onUploadSuccess }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const { uploadFile, isLoading, error, data } = useFileUpload();
-
+    const [showSuccess, setShowSuccess] = useState(false);
+    const fileInputRef = useRef(null);
     const handleFileChange = (event) => {
         if (event.target.files) {
             setSelectedFile(event.target.files[0]);
@@ -29,7 +30,23 @@ const FileUploadComponent = ({ onUploadSuccess }) => {
                 name: selectedFile.name,
             });
         }
+
+
+        setSelectedFile(null); if (fileInputRef.current) {
+            fileInputRef.current.value = null;
+        }
     };
+
+    useEffect(() => {
+        if (data) {
+            setShowSuccess(true);
+            const timer = setTimeout(() => {
+                setShowSuccess(false);
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [data]);
 
     return (
         <Card className="w-full mx-auto mt-10 rounded outline-dotted border-0">
@@ -44,6 +61,7 @@ const FileUploadComponent = ({ onUploadSuccess }) => {
                 {/* File Input */}
                 <div className="flex items-center gap-2">
                     <Input
+                        ref={fileInputRef}
                         type="file"
                         onChange={handleFileChange}
                         disabled={isLoading}
@@ -79,7 +97,7 @@ const FileUploadComponent = ({ onUploadSuccess }) => {
                 )}
 
                 {/* Success Message */}
-                {data && (
+                {showSuccess && (
                     <div className="p-3 rounded-lg bg-green-50 border border-green-200">
                         <p className="flex items-center gap-2 text-green-700 font-medium">
                             <CheckCircle2 className="h-4 w-4" />
