@@ -125,7 +125,7 @@ function Page() {
                                 </button>
                             </div>
 
-                            <pre className='mt-4 text-xs bg-slate-100 p-3 rounded text-slate-700 overflow-auto'>{JSON.stringify(formData, null, 2)}</pre>
+                            {/* <pre className='mt-4 text-xs bg-slate-100 p-3 rounded text-slate-700 overflow-auto'>{JSON.stringify(formData, null, 2)}</pre> */}
                         </div>
                     </div>
 
@@ -133,7 +133,7 @@ function Page() {
                     <div className='md:col-span-4'>
                         <div className='bg-white rounded-lg shadow-sm p-4 space-y-4'>
                             <div className='space-y-4 border border-slate-200 p-4 rounded bg-blue-50'>
-                                <h3 className='text-lg font-semibold text-slate-800'>Destination Actions</h3>
+                                <h3 className='text-lg font-semibold text-slate-800'>Actions</h3>
                                 <div className="flex items-center justify-between">
                                     <span className='text-sm font-medium text-slate-700'>Publish Online</span>
                                     <Switch
