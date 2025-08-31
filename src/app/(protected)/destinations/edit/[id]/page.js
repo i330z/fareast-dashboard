@@ -24,6 +24,7 @@ function Page() {
 
 
 
+
     useEffect(() => {
         const fetchDestination = async () => {
             if (!id) return;
@@ -39,9 +40,6 @@ function Page() {
         fetchDestination();
 
     }, [id])
-
-
-
 
 
     const fileInputRef = useRef(null)
@@ -154,6 +152,53 @@ function Page() {
                                 <span className='text-sm font-medium text-slate-700'>Email</span>
                                 <Input placeholder="Email address" value={formData.email} onChange={(e) => handleChange("email", e.target.value)} className="mt-2" />
                             </label>
+
+                            <label className='block'>
+                                <span className='text-sm font-medium text-slate-700'>Select State</span>
+                                <select
+                                    value={formData.state}
+                                    onChange={(e) => handleChange("state", e.target.value)}
+                                    className='mt-2 w-full border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-200'>
+                                    <option value="">Select State</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Sikkim">Sikkim</option>
+
+                                </select>
+                            </label>
+
+                            {/* Description Textarea */}
+                            <label className='block'>
+                                <span className='text-sm font-medium text-slate-700'>Description</span>
+                                <textarea
+                                    rows={4}
+                                    value={formData.description}
+                                    onChange={(e) => handleChange("description", e.target.value)}
+                                    className='mt-2 w-full border rounded-md p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-sky-200'
+                                    placeholder="Enter a description"
+                                />
+                            </label>
+
+                            {/* Category Selector */}
+                            <label className='block'>
+                                <span className='text-sm font-medium text-slate-700'>Category</span>
+                                <select
+                                    value={formData.category}
+                                    onChange={(e) => handleChange("category", e.target.value)}
+                                    className='mt-2 w-full border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-200'>
+                                    <option value="">Select Category</option>
+                                    <option value="Adventure">Adventure</option>
+                                    <option value="Nature">Nature</option>
+                                    <option value="Hiking">Hiking</option>
+                                </select>
+                            </label>
+
+
                             <div>
                                 <FileUploadComponent onUploadSuccess={handleFileUpload} />
                                 {formData.images.length > 0 && (

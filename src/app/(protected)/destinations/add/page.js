@@ -3,9 +3,10 @@ import SimpleEditor from '@/components/Editor';
 import FileUploadComponent from '@/components/FileUploadComponent';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { X } from "lucide-react";
 import { useRouter } from 'next/navigation';
+
 
 function Page() {
     const router = useRouter()
@@ -16,13 +17,42 @@ function Page() {
         phone: "",
         email: "",
         isFeatured: false,
+        description: '',
+        slug: '',
+        category: '',
+        state: '',
         images: [] // { id, file, url, name }
     })
 
-    const fileInputRef = useRef(null)
+
+
+
+    const generateSlug = (string) => {
+        return string
+            .toLowerCase()                     // Convert string to lowercase
+            .trim()                             // Remove leading and trailing spaces
+            .replace(/[\s_-]+/g, '-')           // Replace spaces and underscores with hyphens
+            .replace(/[^a-z0-9-]/g, '')         // Remove non-alphanumeric characters (except for hyphen)
+            .replace(/--+/g, '-')               // Replace multiple hyphens with a single one
+            .replace(/^-+/, '')                 // Remove leading hyphen
+            .replace(/-+$/, '');                // Remove trailing hyphen
+    };
+
+
+    const slugRef = useRef('');
+
+
+    
 
     const handleChange = (field, value) => {
-        setFormData((prev) => ({ ...prev, [field]: value }))
+        setFormData((prev) => {
+            if (field === "title") {
+                return { ...prev, title:value, slug: generateSlug(value) };
+            }
+            return { ...prev, [field]: value };
+        })
+
+
     }
 
 
@@ -34,14 +64,7 @@ function Page() {
         }));
     };
 
-    // const handleImageChange = (e) => {
-    //     const files = Array.from(e.target.files || [])
-    //     if (files.length === 0) return
-    //     const uploaded = uploadImages(files)
-    //     setFormData(prev => ({ ...prev, images: [...prev.images, ...uploaded] }))
-    //     // Reset input so same file can be selected again if needed
-    //     if (fileInputRef.current) fileInputRef.current.value = ""
-    // }
+
 
     const removeImage = (id) => {
         setFormData(prev => {
@@ -137,6 +160,65 @@ function Page() {
                                 <span className='text-sm font-medium text-slate-700'>Email</span>
                                 <Input placeholder="Email address" value={formData.email} onChange={(e) => handleChange("email", e.target.value)} className="mt-2" />
                             </label>
+
+                            <label className='block'>
+                                <span className='text-sm font-medium text-slate-700'>Select State</span>
+                                <select
+                                    value={formData.state}
+                                    onChange={(e) => handleChange("state", e.target.value)}
+                                    className='mt-2 w-full border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-200'>
+                                    <option value="">Select State</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Sikkim">Sikkim</option>
+
+                                </select>
+                            </label>
+
+
+
+                            {/* Category Selector */}
+                            <label className='block'>
+                                <span className='text-sm font-medium text-slate-700'>Category</span>
+                                <select
+                                    value={formData.category}
+                                    onChange={(e) => handleChange("category", e.target.value)}
+                                    className='mt-2 w-full border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-200'>
+                                    <option value="">Select Category</option>
+                                    <option value="Adventure">Adventure</option>
+                                    <option value="Nature">Nature</option>
+                                    <option value="Hiking">Hiking</option>
+                                </select>
+                            </label>
+
+
+                            {/* Description Textarea */}
+                            <label className='block'>
+                                <span className='text-sm font-medium text-slate-700'>Description</span>
+                                <textarea
+                                    rows={4}
+                                    value={formData.description}
+                                    onChange={(e) => handleChange("description", e.target.value)}
+                                    className='mt-2 w-full border rounded-md p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-sky-200'
+                                    placeholder="Enter a description"
+                                />
+                            </label>
+
+                            <div>
+                                <label htmlFor="slug">Slug</label>
+                                <input
+                                    type="text"
+                                    id="slug"
+                                    value={formData.slug} // Use ref to display the slug value
+                                    readOnly
+                                />
+                            </div>
+
                             <div>
                                 <FileUploadComponent onUploadSuccess={handleFileUpload} />
                                 {formData.images.length > 0 && (
