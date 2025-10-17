@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from '@/components/ui/checkbox';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import MultiFileUploadComponent from '@/components/MultiFileUploadComponent';
 
 const northEastStates = [
     {
@@ -57,7 +58,7 @@ function AddAccommodationPage() {
     const [formData, setFormData] = useState({
         name: '',
         description: '',
-        notes:'',
+        notes: '',
         images: [], // Array of { file, url }
         location: {
             state: '',
@@ -74,6 +75,15 @@ function AddAccommodationPage() {
         facilities: [],
         note: ''
     });
+
+
+     const handleUploadSuccess = ({ id, url, name }) => {
+        setFormData((prev) => ({
+            ...prev,
+            images: [...prev.images, { id, url, name }].slice(0, 4)
+        }));
+        // or do additional work: call API, set form value, etc.
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -229,6 +239,44 @@ function AddAccommodationPage() {
                                 </div>
                             </CardContent>
                         </Card>
+                        <Card className="mt-10">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><MapPin className="w-5 h-5" /> Location Details</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="state">State</Label>
+                                        <Select value={formData.location.state} onValueChange={(value) => { handleNestedChange('location', 'state', value); handleNestedChange('location', 'district', ''); }}>
+                                            <SelectTrigger><SelectValue placeholder="Select a state" /></SelectTrigger>
+                                            <SelectContent>
+                                                {northEastStates.map(s => <SelectItem key={s.stateName} value={s.stateName}>{s.stateName}</SelectItem>)}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2 ">
+                                        <Label htmlFor="district">District</Label>
+                                        <Select value={formData.location.district} onValueChange={(value) => handleNestedChange('location', 'district', value)} disabled={!formData.location.state}>
+                                            <SelectTrigger><SelectValue placeholder="Select a district" /></SelectTrigger>
+                                            <SelectContent>
+                                                {getDistrictsForState(formData.location.state).map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="address">Full Address</Label>
+                                    <Textarea id="address" value={formData.location.address} onChange={(e) => handleNestedChange('location', 'address', e.target.value)} placeholder="Street, Village, Landmark..." />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="pincode">Pincode</Label>
+                                    <Input id="pincode" type="number" value={formData.location.pincode} onChange={(e) => handleNestedChange('location', 'pincode', e.target.value)} placeholder="e.g., 799001" />
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <div className='image-upload'>
+                            <MultiFileUploadComponent onUploadSuccess={handleUploadSuccess} />
+                        </div>
                         <div className="flex justify-end mt-10">
                             <Button type="submit" size="lg">Save Homestay</Button>
                         </div>
@@ -271,41 +319,7 @@ function AddAccommodationPage() {
                                 </div>
                             </CardContent>
                         </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><MapPin className="w-5 h-5" /> Location Details</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-6">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="state">State</Label>
-                                        <Select value={formData.location.state} onValueChange={(value) => { handleNestedChange('location', 'state', value); handleNestedChange('location', 'district', ''); }}>
-                                            <SelectTrigger><SelectValue placeholder="Select a state" /></SelectTrigger>
-                                            <SelectContent>
-                                                {northEastStates.map(s => <SelectItem key={s.stateName} value={s.stateName}>{s.stateName}</SelectItem>)}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-2 ">
-                                        <Label htmlFor="district">District</Label>
-                                        <Select value={formData.location.district} onValueChange={(value) => handleNestedChange('location', 'district', value)} disabled={!formData.location.state}>
-                                            <SelectTrigger><SelectValue placeholder="Select a district" /></SelectTrigger>
-                                            <SelectContent>
-                                                {getDistrictsForState(formData.location.state).map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="address">Full Address</Label>
-                                    <Textarea id="address" value={formData.location.address} onChange={(e) => handleNestedChange('location', 'address', e.target.value)} placeholder="Street, Village, Landmark..." />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="pincode">Pincode</Label>
-                                    <Input id="pincode" type="number" value={formData.location.pincode} onChange={(e) => handleNestedChange('location', 'pincode', e.target.value)} placeholder="e.g., 799001" />
-                                </div>
-                            </CardContent>
-                        </Card>
+
                     </div>  {/* closes md:col-span-4 */}
 
                 </div>  {/* <-- ADD this line to close the grid (md:grid-cols-12) */}

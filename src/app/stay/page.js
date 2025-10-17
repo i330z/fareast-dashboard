@@ -11,10 +11,10 @@ import { Edit, Trash } from "lucide-react"
 function page() {
     const router = useRouter()
 
-    const deleteDestination = async (id) => {
+    const deleteStay = async (id) => {
         try {
             if (!id) return
-            const res = await fetch(`/api/destination?id=${id}`, {
+            const res = await fetch(`/api/stay?id=${id}`, {
                 method: 'DELETE'
             })
             const data = await res.json()
@@ -55,14 +55,14 @@ function page() {
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => router.push(`/destinations/edit/${rowData.id}`)}
+                            onClick={() => router.push(`/stay/edit/${rowData.id}`)}
                         >
                             <Edit className="h-4 w-4" />
                         </Button>
                         <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => deleteDestination(rowData.id)}
+                            onClick={() => deleteStay(rowData.id)}
                         >
                             <Trash className="h-4 w-4" />
                         </Button>
@@ -75,7 +75,7 @@ function page() {
     const [data, setData] = useState([])
 
     async function getDestinations() {
-        const res = await fetch('/api/destination', { method: 'GET', cache: 'no-store' })
+        const res = await fetch('/api/stay', { method: 'GET', cache: 'no-store' })
         const data = await res.json()
         console.log(data)
         setData(data.destinations || [])

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { accomodationRef } from "@/lib/database";
+import { accomadationRef } from "@/lib/database";
 import { doc, serverTimestamp, setDoc, getDocs, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 
 
@@ -11,7 +11,7 @@ export async function POST(req) {
             return NextResponse.json({ message: "All fields are required" }, { status: 400 });
         }
 
-        const newDocRef = doc(accomodationRef);
+        const newDocRef = doc(accomadationRef);
         await setDoc(newDocRef, {
             ...body,
             createdAt: serverTimestamp(),
@@ -32,7 +32,7 @@ export async function GET(req) {
         const { searchParams } = new URL(req.url);
         const id = searchParams.get('id');
         if(id){
-            const docRef = doc(accomodationRef, id);
+            const docRef = doc(accomadationRef, id);
             const docSnap = await getDoc(docRef);
 
             if(!docSnap.exists()){
@@ -42,7 +42,7 @@ export async function GET(req) {
             return NextResponse.json({ destination: docSnap.data() }, { status: 200 });
         }else{
 
-            const querySnapshot = await getDocs(accomodationRef);
+            const querySnapshot = await getDocs(accomadationRef);
             const destinations = querySnapshot.docs.map(doc => doc.data());
             return NextResponse.json({ destinations }, { status: 200 });
         }
@@ -58,7 +58,7 @@ export async function PUT(req) {
         const id = searchParams.get('id');
         const body = await req.json();
 
-        const docRef =  doc(accomodationRef, id);
+        const docRef =  doc(accomadationRef, id);
         await updateDoc(docRef, {
             ...body,
             updatedAt: serverTimestamp()
@@ -74,7 +74,7 @@ export async function DELETE(req) {
     try {
         const { searchParams } = new URL(req.url);
         const id = searchParams.get('id');
-        const docRef =  doc(accomodationRef, id);
+        const docRef =  doc(accomadationRef, id);
         await deleteDoc(docRef);
         return NextResponse.json({ message: "Destination deleted successfully" }, { status: 200 });
     } catch (error) {
