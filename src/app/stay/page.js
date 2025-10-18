@@ -19,11 +19,11 @@ function page() {
             })
             const data = await res.json()
             console.log(data)
-            alert("Destination deleted successfully")
+            alert("Accomadation deleted successfully")
             router.refresh()
         } catch (error) {
             console.log(error)
-            alert("Error deleting destination")
+            alert("Error Deleting Accomadation")
         }
     }
 
@@ -42,7 +42,7 @@ function page() {
             header: 'Phone',
         },
         {
-            accessorKey: 'email',
+            accessorKey: 'host.email',
             header: 'Email',
         },
         {
@@ -78,7 +78,7 @@ function page() {
         const res = await fetch('/api/stay', { method: 'GET', cache: 'no-store' })
         const data = await res.json()
         console.log(data)
-        setData(data.destinations || [])
+        setData(data.accomadations || [])
     }
 
     useEffect(() => {

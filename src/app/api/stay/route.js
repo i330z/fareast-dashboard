@@ -17,7 +17,7 @@ export async function POST(req) {
             createdAt: serverTimestamp(),
             id: newDocRef.id
         });
-        return NextResponse.json({ message: "Destination added successfully" }, { status: 201 });
+        return NextResponse.json({ message: "Accomadation added successfully" }, { status: 201 });
 
     } catch (error) {
         console.log(error);
@@ -36,15 +36,15 @@ export async function GET(req) {
             const docSnap = await getDoc(docRef);
 
             if(!docSnap.exists()){
-                return NextResponse.json({ message: "Destination not found" }, { status: 404 });    
+                return NextResponse.json({ message: "Accomadation not found" }, { status: 404 });    
             }
 
-            return NextResponse.json({ destination: docSnap.data() }, { status: 200 });
+            return NextResponse.json({ accomadation: docSnap.data() }, { status: 200 });
         }else{
 
             const querySnapshot = await getDocs(accomadationRef);
-            const destinations = querySnapshot.docs.map(doc => doc.data());
-            return NextResponse.json({ destinations }, { status: 200 });
+            const accomadations = querySnapshot.docs.map(doc => doc.data());
+            return NextResponse.json({ accomadations }, { status: 200 });
         }
     } catch (error) {
         console.log(error);
@@ -63,7 +63,7 @@ export async function PUT(req) {
             ...body,
             updatedAt: serverTimestamp()
         })
-        return NextResponse.json({ message: "Destination updated successfully" }, { status: 200 });
+        return NextResponse.json({ message: "Accomadation updated successfully" }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ message: "Error updating the document" }, { status: 500 });
     }
@@ -76,7 +76,7 @@ export async function DELETE(req) {
         const id = searchParams.get('id');
         const docRef =  doc(accomadationRef, id);
         await deleteDoc(docRef);
-        return NextResponse.json({ message: "Destination deleted successfully" }, { status: 200 });
+        return NextResponse.json({ message: "Accomadation deleted successfully" }, { status: 200 });
     } catch (error) {
         console.log(error);
         return NextResponse.json({ message: "Error deleting the document" }, { status: 500 });
