@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from '@/components/ui/checkbox';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import MultiFileUploadComponent from '@/components/MultiFileUploadComponent';
+import { useRouter } from 'next/navigation';
+
 
 const northEastStates = [
     {
@@ -55,6 +57,8 @@ const facilitiesList = [
 ];
 
 function AddAccommodationPage() {
+const router = useRouter()
+
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -77,7 +81,7 @@ function AddAccommodationPage() {
     });
 
 
-     const handleUploadSuccess = ({ id, url, name }) => {
+    const handleUploadSuccess = ({ id, url, name }) => {
         setFormData((prev) => ({
             ...prev,
             images: [...prev.images, { id, url, name }].slice(0, 4)
@@ -163,12 +167,22 @@ function AddAccommodationPage() {
         };
     }, []);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log('Submitting Homestay Data:', formData);
         alert('Form data logged to console. See implementation notes for API submission.');
-        // API submission logic would go here.
-        // You would likely use FormData to send files.
+        const res = await fetch('/api/stay', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        })
+
+        const data = await res.json()
+
+        console.log(data)
+
+        alert("Form data logged to console.")
+        router.push("/stay")
     };
 
     return (

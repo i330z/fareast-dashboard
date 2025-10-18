@@ -29,16 +29,16 @@ function page() {
 
     const columns = [
         {
-            accessorKey: 'title',
-            header: 'Title',
+            accessorKey: 'name',
+            header: 'Name',
         },
         {
-            accessorKey: 'address',
+            accessorKey: 'location.address',
             header: 'Address',
         },
 
         {
-            accessorKey: 'phone',
+            accessorKey: 'host.contact',
             header: 'Phone',
         },
         {

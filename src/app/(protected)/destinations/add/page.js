@@ -79,7 +79,7 @@ function Page() {
         e.preventDefault()
         // Replace with real submit logic (API call / formData build)
         console.log("Submitting", formData)
-        return
+        
         const res = await fetch('/api/destination', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
