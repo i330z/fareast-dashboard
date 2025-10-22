@@ -44,7 +44,8 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
         location: { state: "", district: "", address: "", pincode: "" },
         host: { name: "", image: null, contact: "", whatsapp: "" },
         facilities: [],
-        note: ""
+        note: "",
+        category: "",
     });
 
     useEffect(() => {
@@ -81,7 +82,8 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
                         image: stayData.host?.image ? { id: stayData.host.image.id, url: stayData.host.image.url } : null,
                     },
                     facilities: stayData.facilities ?? [],
-                    note: stayData.note ?? ""
+                    note: stayData.note ?? "",
+                    category: stayData.category ?? ""
                 }));
             })
             .catch(err => {
@@ -244,6 +246,21 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
                                 <div className="space-y-2">
                                     <Label htmlFor="notes">Notes</Label>
                                     <Textarea id="notes" name="notes" value={formData.notes} onChange={handleInputChange} placeholder="Add extra notes for the customers.." rows={6} />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="category">Category</Label>
+                                    <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Homestay">Homestay</SelectItem>
+                                            <SelectItem value="Hotel">Hotel</SelectItem>
+                                            <SelectItem value="Camping">Camping</SelectItem>
+                                            <SelectItem value="Zostel">Zostel</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </CardContent>
                         </Card>
