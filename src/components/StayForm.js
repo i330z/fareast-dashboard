@@ -11,6 +11,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import MultiFileUploadComponent from "@/components/MultiFileUploadComponent";
 import { useRouter } from "next/navigation";
+import { Wifi, Car, Coffee, Dog, Clock, Mountain } from 'lucide-react'
+
 
 const northEastStates = [
     { stateName: "Assam", districts: ["Kamrup", "Dibrugarh", "Nagaon"] },
@@ -24,12 +26,23 @@ const northEastStates = [
 ];
 
 const facilitiesList = [
-    { id: "coupleFriendly", label: "Couple Friendly" },
-    { id: "parking", label: "Parking" },
-    { id: "wifi", label: "Wi-Fi" },
-    { id: "food", label: "Food Available" },
-    { id: "breakfast", label: "Breakfast Included" }
+    { id: "coupleFriendly", label: "Couple Friendly", icon: Dog, iconName: 'Dog' },
+    { id: "wifi", label: 'Free Wi-Fi', icon: Wifi, iconName: 'Wifi'  },
+    // { id: "freeparking", name: 'Free Parking', icon: Car },
+    { id: "breakfast", label: 'Breakfast Included', icon: Coffee, iconName: 'Coffee'  },
+    { id: "pet-friendly", label: 'Pet Friendly', icon: Dog, iconName: 'Dog'  },
+    { id: "checkin", label: '24/7 Check-in', icon: Clock , iconName: 'Clock'  },
+    { id: "mountain", label: 'Mountain View', icon: Mountain, iconName: 'Mountain'  },
 ];
+
+const generateSlug = (name) => {
+    return name
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '') // Remove special characters
+        .replace(/\s+/g, '-')     // Replace spaces with hyphens
+        .replace(/-+/g, '-');     // Remove consecutive hyphens
+};
 
 export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUrlBase = "/api/stay" }) {
     const router = useRouter();
@@ -44,8 +57,10 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
         location: { state: "", district: "", address: "", pincode: "" },
         host: { name: "", image: null, contact: "", whatsapp: "" },
         facilities: [],
-        note: "",
+        notes: "",
         category: "",
+        slug: "",
+        isPublished: false
     });
 
     useEffect(() => {
@@ -59,10 +74,10 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
             })
             .then(data => {
                 if (!mounted) return;
-                
+
                 // The API response is nested under an 'accomodation' object.
                 const stayData = data.accomadation;
-                
+
                 if (!stayData) throw new Error("Fetched data is missing 'accomodation' object.");
 
                 // Map backend response to form shape. Adjust mapping as needed.
@@ -118,6 +133,7 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
     };
 
     const handleImageUpload = (e) => {
+        e.preventDefault();
         const files = Array.from(e.target.files || []);
         if (files.length === 0) return;
         const newImages = files.map(file => ({ file, url: URL.createObjectURL(file), name: file.name }));
@@ -134,6 +150,7 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
     };
 
     const handleHostImageChange = (e) => {
+        e.preventDefault();
         const file = e.target.files?.[0];
         if (file) {
             setFormData(prev => ({ ...prev, host: { ...prev.host, image: { file, url: URL.createObjectURL(file) } } }));
@@ -143,12 +160,28 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
         e.target.value = "";
     };
 
+    // const handleFacilityChange = (facilityId, checked) => {
+    //     setFormData(prev => {
+    //         const facilities = checked ? [...prev.facilities, facilityId] : prev.facilities.filter(id => id !== facilityId);
+    //         return { ...prev, facilities };
+    //     });
+    // };
     const handleFacilityChange = (facilityId, checked) => {
         setFormData(prev => {
-            const facilities = checked ? [...prev.facilities, facilityId] : prev.facilities.filter(id => id !== facilityId);
-            return { ...prev, facilities };
+            const f = facilitiesList.find(x => x.id === facilityId);
+            if (!f) return prev;
+
+            if (checked) {
+                // add object, avoid duplicates
+                if (prev.facilities.some(item => item.id === facilityId)) return prev;
+                return { ...prev, facilities: [...prev.facilities, { id: f.id, label: f.label, iconName: f.iconName }] };
+            } else {
+                // remove by id
+                return { ...prev, facilities: prev.facilities.filter(item => item.id !== facilityId) };
+            }
         });
     };
+
 
     const getDistrictsForState = (stateName) => {
         const state = northEastStates.find(st => st.stateName === stateName);
@@ -164,8 +197,12 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
             // Basic behavior: send JSON for fields and expect backend to handle files via separate uploads.
             const url = stayId ? `${fetchUrlBase}?id=${encodeURIComponent(stayId)}` : fetchUrlBase;
             const method = stayId ? "PUT" : "POST";
+            const slug = generateSlug(formData.name);
+            const payload = { ...formData, slug };
 
-            const payload = { ...formData };
+
+            console.log("Submitting payload:", payload);
+            // return
             // If images contain File objects, you might need to upload them separately. Adjust as needed.
             const res = await fetch(url, {
                 method,
@@ -196,7 +233,7 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
                 <div className="space-y-2">
                     <h1 className="text-3xl font-bold tracking-tight">{stayId ? "Edit Homestay" : "Add New Homestay"}</h1>
                     <p className="text-muted-foreground">Fill in the details below.</p>
-                    
+
                 </div>
 
                 <div className="grid md:grid-cols-12 gap-8">
@@ -221,24 +258,27 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
                                     <div className="grid grid-cols-2 gap-2">
                                         {facilitiesList.map(f => (
                                             <label key={f.id} className="inline-flex items-center space-x-2">
-                                                <Checkbox checked={formData.facilities.includes(f.id)} onCheckedChange={(checked) => handleFacilityChange(f.id, Boolean(checked))} />
+                                                <Checkbox
+                                                    checked={formData.facilities.some(item => item.id === f.id)}
+                                                    onCheckedChange={(checked) => handleFacilityChange(f.id, Boolean(checked))}
+                                                />
                                                 <span className="text-sm">{f.label}</span>
                                             </label>
                                         ))}
                                     </div>
                                     {formData.facilities.length > 0 && (
                                         <div className="flex flex-wrap gap-2 mt-2">
-                                            {formData.facilities.map(id => {
-                                                const f = facilitiesList.find(x => x.id === id);
-                                                return (
-                                                    <div key={id} className="inline-flex items-center px-2 py-1 bg-muted rounded-full text-sm">
-                                                        <span className="mr-2">{f?.label ?? id}</span>
-                                                        <Button type="button" size="sm" variant="ghost" onClick={() => handleFacilityChange(id, false)} className="p-0">
-                                                            <Trash2 className="w-3 h-3" />
-                                                        </Button>
-                                                    </div>
-                                                );
-                                            })}
+                                              {formData.facilities.map(fac => (
+                                                <div key={fac.id} className="inline-flex items-center px-2 py-1 bg-muted rounded-full text-sm">
+                                                    <span className="mr-2">
+                                                        {/* optional: render icon component */}
+                                                        {fac.label}
+                                                    </span>
+                                                    <Button type="button" size="sm" variant="ghost" onClick={() => handleFacilityChange(fac.id, false)} className="p-0">
+                                                        <Trash2 className="w-3 h-3" />
+                                                    </Button>
+                                                </div>
+                                            ))}
                                         </div>
                                     )}
                                 </div>
@@ -320,8 +360,21 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
                             </div>
                         </div>
 
-                        <div className="flex justify-end mt-10">
-                            <Button type="submit" size="lg" disabled={loading}>{loading ? "Saving..." : (stayId ? "Update Homestay" : "Save Homestay")}</Button>
+                        <div className="mt-10">
+                            <div className="flex items-center justify-between bg-gray-300/50 p-4 rounded">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                        className="bg-white border-gray-400"
+                                        id="isPublished"
+                                        checked={formData.isPublished}
+                                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPublished: checked }))}
+                                    />
+                                    <Label htmlFor="isPublished">Publish this homestay</Label>
+                                </div>
+                                <Button type="submit" size="lg" disabled={loading}>
+                                    {loading ? "Saving..." : (stayId ? "Update Homestay" : "Save Homestay")}
+                                </Button>
+                            </div>
                         </div>
                     </div>
 

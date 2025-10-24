@@ -161,7 +161,7 @@ const MultiFileUploadComponent = ({ onUploadSuccess }) => {
                                 aria-hidden
                             />
                             <label className="inline-block">
-                                <Button onClick={() => fileInputRef.current?.click()} size="sm">
+                                <Button type="button" onClick={() => fileInputRef.current?.click()} size="sm">
                                     Choose files
                                 </Button>
                             </label>
