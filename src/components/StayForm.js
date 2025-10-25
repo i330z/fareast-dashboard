@@ -12,7 +12,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import MultiFileUploadComponent from "@/components/MultiFileUploadComponent";
 import { useRouter } from "next/navigation";
 import { Wifi, Car, Coffee, Dog, Clock, Mountain } from 'lucide-react'
-
+import HostImageUploadComponent from "@/components/HostImageUploadComponent";
 
 const northEastStates = [
     { stateName: "Assam", districts: ["Kamrup", "Dibrugarh", "Nagaon"] },
@@ -27,12 +27,12 @@ const northEastStates = [
 
 const facilitiesList = [
     { id: "coupleFriendly", label: "Couple Friendly", icon: Dog, iconName: 'Dog' },
-    { id: "wifi", label: 'Free Wi-Fi', icon: Wifi, iconName: 'Wifi'  },
+    { id: "wifi", label: 'Free Wi-Fi', icon: Wifi, iconName: 'Wifi' },
     // { id: "freeparking", name: 'Free Parking', icon: Car },
-    { id: "breakfast", label: 'Breakfast Included', icon: Coffee, iconName: 'Coffee'  },
-    { id: "pet-friendly", label: 'Pet Friendly', icon: Dog, iconName: 'Dog'  },
-    { id: "checkin", label: '24/7 Check-in', icon: Clock , iconName: 'Clock'  },
-    { id: "mountain", label: 'Mountain View', icon: Mountain, iconName: 'Mountain'  },
+    { id: "breakfast", label: 'Breakfast Included', icon: Coffee, iconName: 'Coffee' },
+    { id: "pet-friendly", label: 'Pet Friendly', icon: Dog, iconName: 'Dog' },
+    { id: "checkin", label: '24/7 Check-in', icon: Clock, iconName: 'Clock' },
+    { id: "mountain", label: 'Mountain View', icon: Mountain, iconName: 'Mountain' },
 ];
 
 const generateSlug = (name) => {
@@ -268,7 +268,7 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
                                     </div>
                                     {formData.facilities.length > 0 && (
                                         <div className="flex flex-wrap gap-2 mt-2">
-                                              {formData.facilities.map(fac => (
+                                            {formData.facilities.map(fac => (
                                                 <div key={fac.id} className="inline-flex items-center px-2 py-1 bg-muted rounded-full text-sm">
                                                     <span className="mr-2">
                                                         {/* optional: render icon component */}
@@ -384,7 +384,25 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
                                 <CardTitle className="flex items-center gap-2"><User className="w-5 h-5" /> Host Details</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
+
+
+
+                                { /* ...inside the Host Details CardContent, replace existing host image input block with: */}
                                 <div className="space-y-2">
+                                    <Label>Host Image</Label>
+                                    <HostImageUploadComponent
+                                        initialImage={formData.host.image ?? null}
+                                        onUploadSuccess={(data) => {
+                                            if (data) {
+                                                setFormData(prev => ({ ...prev, host: { ...prev.host, image: { id: data.id, url: data.url, name: data.name } } }));
+                                            } else {
+                                                setFormData(prev => ({ ...prev, host: { ...prev.host, image: null } }));
+                                            }
+                                        }}
+                                    />
+                                </div>
+
+                                {/* <div className="space-y-2">
                                     <Label>Host Image</Label>
                                     <div className="flex flex-col items-center gap-4">
                                         <AspectRatio ratio={1 / 1} className="w-full bg-muted rounded-md overflow-hidden">
@@ -401,7 +419,7 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
                                             <Plus className="w-4 h-4 mr-2" /> Upload
                                         </Button>
                                     </div>
-                                </div>
+                                </div> */}
 
                                 <div className="space-y-2">
                                     <Label htmlFor="hostName">Host Name</Label>
