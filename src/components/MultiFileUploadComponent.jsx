@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Upload, Loader2, CheckCircle2, AlertCircle, Trash2 } from "lucide-react";
 
-const MultiFileUploadComponent = ({ onUploadSuccess }) => {
+const MultiFileUploadComponent = ({ onUploadSuccess, onRemove }) => {
     const fileInputRef = useRef(null);
     const previewsRef = useRef(new Set());
     const { uploadFile } = useFileUpload();
@@ -116,7 +116,12 @@ const MultiFileUploadComponent = ({ onUploadSuccess }) => {
                 URL.revokeObjectURL(toRemove.preview);
                 previewsRef.current.delete(toRemove.preview);
             }
-            return prev.filter((it) => it.id !== id);
+            const next = prev.filter((it) => it.id !== id);
+            // notify parent about removal (if uploaded previously, include url so parent can match)
+            if (toRemove && typeof onRemove === "function") {
+                try { onRemove({ id: toRemove.id, url: toRemove.url, name: toRemove.file?.name }); } catch (e) { /* ignore */ }
+            }
+            return next;
         });
     };
 
