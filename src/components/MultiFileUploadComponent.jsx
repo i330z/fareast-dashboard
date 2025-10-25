@@ -8,13 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Upload, Loader2, CheckCircle2, AlertCircle, Trash2 } from "lucide-react";
 
-const MultiFileUploadComponent = ({ onUploadSuccess, onRemove }) => {
+const MultiFileUploadComponent = ({ onUploadSuccess, onRemove, initialItems = [] }) => {
     const fileInputRef = useRef(null);
     const previewsRef = useRef(new Set());
     const { uploadFile } = useFileUpload();
 
-    const [items, setItems] = useState([]); // { id, file, status, progress, url, error, preview }
     const [dragActive, setDragActive] = useState(false);
+    const [uploadingItems, setUploadingItems] = useState([]); // { id, file, status, progress, url, error, preview }
 
     useEffect(() => {
         return () => {
@@ -41,7 +41,7 @@ const MultiFileUploadComponent = ({ onUploadSuccess, onRemove }) => {
             };
         });
 
-        setItems((prev) => {
+        setUploadingItems((prev) => {
             const merged = [...prev, ...newItems];
             // start uploading the newly added items
             newItems.forEach(uploadItem);
@@ -58,7 +58,7 @@ const MultiFileUploadComponent = ({ onUploadSuccess, onRemove }) => {
 
     const uploadItem = async (item) => {
         // optimistic update: mark uploading
-        setItems((prev) =>
+        setUploadingItems((prev) =>
             prev.map((it) => (it.id === item.id ? { ...it, status: "uploading", progress: 5 } : it))
         );
 
@@ -66,19 +66,16 @@ const MultiFileUploadComponent = ({ onUploadSuccess, onRemove }) => {
             // call hook uploadFile; if it supports progress, integrate here
             const url = await uploadFile(item.file);
 
-            setItems((prev) =>
-                prev.map((it) =>
-                    it.id === item.id
-                        ? { ...it, status: "success", progress: 100, url, error: null }
-                        : it
-                )
+            // Remove from uploading list on success
+            setUploadingItems((prev) =>
+                prev.filter((it) => it.id !== item.id)
             );
 
             if (onUploadSuccess) {
                 onUploadSuccess({ id: item.id, url, name: item.file.name });
             }
         } catch (err) {
-            setItems((prev) =>
+            setUploadingItems((prev) =>
                 prev.map((it) =>
                     it.id === item.id
                         ? { ...it, status: "error", progress: 0, error: err?.message || String(err) }
@@ -110,7 +107,7 @@ const MultiFileUploadComponent = ({ onUploadSuccess, onRemove }) => {
     };
 
     const removeItem = (id) => {
-        setItems((prev) => {
+        setUploadingItems((prev) => {
             const toRemove = prev.find((it) => it.id === id);
             if (toRemove?.preview) {
                 URL.revokeObjectURL(toRemove.preview);
@@ -126,7 +123,7 @@ const MultiFileUploadComponent = ({ onUploadSuccess, onRemove }) => {
     };
 
     const retryItem = (id) => {
-        const item = items.find((it) => it.id === id);
+        const item = uploadingItems.find((it) => it.id === id);
         if (!item) return;
         uploadItem({ ...item, status: "queued", progress: 0 });
     };
@@ -176,9 +173,9 @@ const MultiFileUploadComponent = ({ onUploadSuccess, onRemove }) => {
 
                 {/* File list */}
                 <div className="space-y-3">
-                    {items.length === 0 && <p className="text-sm text-muted-foreground">No files queued.</p>}
+                    {uploadingItems.length === 0 && <p className="text-sm text-muted-foreground">No files queued for upload.</p>}
 
-                    {items.map((it) => (
+                    {uploadingItems.map((it) => (
                         <div key={it.id} className="p-3 border rounded flex items-center justify-between gap-3">
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between gap-3">
@@ -228,30 +225,6 @@ const MultiFileUploadComponent = ({ onUploadSuccess, onRemove }) => {
                         </div>
                     ))}
                 </div>
-
-                {/* Uploaded images grid (shows images after successful upload) */}
-                {items.some((it) => it.status === "success") && (
-                    <div className="mt-4">
-                        <p className="text-sm font-medium mb-2">Uploaded Images</p>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                            {items
-                                .filter((it) => it.status === "success")
-                                .map((it) => (
-                                    <div key={it.id} className="relative rounded overflow-hidden bg-slate-100">
-                                        <img src={it.url || it.preview} alt={it.file.name} className="w-full h-28 object-cover" />
-                                        <button
-                                            type="button"
-                                            onClick={() => removeItem(it.id)}
-                                            className="absolute top-1 right-1 bg-white/80 rounded-full p-1"
-                                            title="Remove"
-                                        >
-                                            <Trash2 className="w-4 h-4 text-red-600" />
-                                        </button>
-                                    </div>
-                                ))}
-                        </div>
-                    </div>
-                )}
             </CardContent>
         </Card>
     );

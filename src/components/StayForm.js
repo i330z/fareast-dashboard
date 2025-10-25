@@ -121,7 +121,13 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
     }, []);
 
     const handleUploadSuccess = ({ id, url, name }) => {
-        setFormData(prev => ({ ...prev, images: [...prev.images, { id, url, name }].slice(0, 4) }));
+        setFormData(prev => {
+            // avoid duplicates by url or id
+            if (prev.images.some(img => (img.id && id && img.id === id) || (img.url && url && img.url === url))) {
+                return prev;
+            }
+            return { ...prev, images: [...prev.images, { id, url, name }].slice(0, 4) };
+        });
     };
 
     // called when MultiFileUploadComponent removes an item from its internal list
@@ -352,7 +358,7 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
                         <div className="mt-6">
                             <Label>Images</Label>
                             <div className="space-y-2">
-                                <MultiFileUploadComponent onUploadSuccess={handleUploadSuccess} onRemove={handleMultiRemove} />
+                                <MultiFileUploadComponent onUploadSuccess={handleUploadSuccess} onRemove={handleMultiRemove} initialItems={formData.images} />
                                 <div className="grid grid-cols-4 gap-2 mt-2">
                                     {formData.images.map((img, idx) => (
                                         <div key={img.id ?? img.url ?? idx} className="relative">
