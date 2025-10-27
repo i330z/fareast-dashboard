@@ -118,3 +118,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@layer base {
+  .rsw-ce h1 { @apply text-3xl font-semibold leading-tight text-gray-900; }
+  .rsw-ce h2 { @apply text-2xl font-semibold leading-tight text-gray-800; }
+  .rsw-ce p  { @apply text-base text-gray-700; }
+  .rsw-ce ul { @apply list-disc pl-6; }
+  .rsw-ce ol { @apply list-decimal pl-6; }
+}
+
+
+.rsw-ce ul {
+  list-style: disc;
+  padding-left: 2em;
+}
+
+.rsw-ce ol {
+  list-style: decimal;
+  padding-left: 2em;
+}

@@ -5,8 +5,6 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CustomUploadAdapter from "@/utils/customUploadAdapter";
 import { useFileUpload } from "@/hooks/useFileUpload";
 
-// import { ImageResize } from 'ckeditor5'
-
 const TextEditor = ({ value, onChange }) => {
   const { uploadFile } = useFileUpload();
 
@@ -40,35 +38,26 @@ const TextEditor = ({ value, onChange }) => {
             "redo",
           ],
 
-
           image: {
             resizeOptions: [
-              {
-                name: 'resizeImage:original',
-                label: 'Original',
-                value: null
-              },
-              {
-                name: 'resizeImage:50',
-                label: '50%',
-                value: '50'
-              },
-              {
-                name: 'resizeImage:75',
-                label: '75%',
-                value: '75'
-              }
+              { name: "resizeImage:original", value: null, icon: "original" },
+              { name: "resizeImage:50", value: "50", icon: "medium" },
+              { name: "resizeImage:75", value: "75", icon: "large" },
             ],
-            toolbar: ["imageTextAlternative", "imageStyle:full", "imageStyle:side", 'resizeImage:50',
-              'resizeImage:75',
-              'resizeImage:original',
-              'toggleImageCaption',
-              '|',
-              'imageStyle:inline',
-              'imageStyle:wrapText',
-              'imageStyle:breakText',
-              '|',
-              'resizeImage'
+            toolbar: [
+              "imageTextAlternative",
+              "imageStyle:full",
+              "imageStyle:side",
+              "resizeImage:50",
+              "resizeImage:75",
+              "resizeImage:original",
+              "toggleImageCaption",
+              "|",
+              "imageStyle:inline",
+              "imageStyle:wrapText",
+              "imageStyle:breakText",
+              "|",
+              "resizeImage",
             ],
           },
         }}

@@ -13,6 +13,8 @@ import MultiFileUploadComponent from "@/components/MultiFileUploadComponent";
 import { useRouter } from "next/navigation";
 import { Wifi, Car, Coffee, Dog, Clock, Mountain } from 'lucide-react'
 import HostImageUploadComponent from "@/components/HostImageUploadComponent";
+import Editor from 'react-simple-wysiwyg';
+
 
 const northEastStates = [
     { stateName: "Assam", districts: ["Kamrup", "Dibrugarh", "Nagaon"] },
@@ -52,7 +54,6 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
     const [formData, setFormData] = useState({
         name: "",
         description: "",
-        notes: "",
         images: [], // items: { id?, file?, url?, name? }
         location: { state: "", district: "", address: "", pincode: "" },
         host: { name: "", image: null, contact: "", whatsapp: "" },
@@ -134,7 +135,7 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
     const handleMultiRemove = ({ id, url }) => {
         setFormData(prev => ({ ...prev, images: prev.images.filter(img => img.id !== id && img.url !== url) }));
     };
-    
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -297,7 +298,17 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
 
                                 <div className="space-y-2">
                                     <Label htmlFor="notes">Notes</Label>
-                                    <Textarea id="notes" name="notes" value={formData.notes} onChange={handleInputChange} placeholder="Add extra notes for the customers.." rows={6} />
+
+                                    <Editor
+                                        id="notes"
+                                        className="prose max-w-none h-64"
+                                        value={formData.notes}
+                                        onChange={(e) => handleInputChange({ target: { name: 'notes', value: e.target.value } })}
+                                        containerProps={{
+                                            className: 'border border-gray-300 rounded-lg'
+                                        }}
+                                    />
+
                                 </div>
 
                                 <div className="space-y-2">
@@ -401,7 +412,7 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
 
                                 { /* ...inside the Host Details CardContent, replace existing host image input block with: */}
                                 <div className="space-y-2">
-                                    <Label>Host Image</Label>
+
                                     <HostImageUploadComponent
                                         initialImage={formData.host.image ?? null}
                                         onUploadSuccess={(data) => {

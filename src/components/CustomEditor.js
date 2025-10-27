@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { uploadFile } from '../utils/handleImageUpload';
+import { uploadFile } from '@/hooks/handleImageUpload';
 
-export default function CustomEditor({ onDataChange, projectName, fetchedContent = '' }) {
+export default function CustomEditorWrapper({ value, onDataChange, projectName }) {
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [editorInstance, setEditorInstance] = useState(null);
 
@@ -13,10 +13,13 @@ export default function CustomEditor({ onDataChange, projectName, fetchedContent
   }, []);
 
   useEffect(() => {
-    if (editorInstance && fetchedContent) {
-      editorInstance.setData(fetchedContent);
+    if (editorInstance && value) {
+      const currentData = editorInstance.getData();
+      if (currentData !== value) {
+        editorInstance.setData(value);
+      }
     }
-  }, [fetchedContent, editorInstance]);
+  }, [value, editorInstance]);
 
   // Custom upload adapter class
   class MyCustomUploadAdapter {
@@ -51,25 +54,28 @@ export default function CustomEditor({ onDataChange, projectName, fetchedContent
 
   const editorConfig = {
     extraPlugins: [MyCustomUploadAdapterPlugin],
-    toolbar: [
-      'heading',
-      '|',
-      'bold',
-      'italic',
-      'link',
-      'bulletedList',
-      'numberedList',
-      'blockQuote',
-      '|',
-      'insertTable',
-      'uploadImage',
-      'undo',
-      'redo',
-    ],
+    toolbar: {
+      items: [
+        'heading',
+        '|',
+        'bold',
+        'italic',
+        'link',
+        'bulletedList',
+        'numberedList',
+        'blockQuote',
+        '|',
+        'insertTable',
+        'uploadImage',
+        'undo',
+        'redo',
+      ],
+    },
     image: {
       toolbar: [
         'imageTextAlternative',
-        'imageStyle:full',
+        'imageStyle:inline',
+        'imageStyle:block',
         'imageStyle:side',
         'toggleImageCaption',
       ],
@@ -85,7 +91,7 @@ export default function CustomEditor({ onDataChange, projectName, fetchedContent
         <CKEditor
           editor={ClassicEditor}
           config={editorConfig}
-          data={fetchedContent}
+          data={value}
           onReady={(editor) => {
             setEditorInstance(editor);
           }}
