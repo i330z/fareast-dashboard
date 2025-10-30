@@ -26,7 +26,9 @@ function Page() {
         slug: '',
         category: '',
         state: '',
-        images: [] // { id, file, url, name }
+        images: [], // { id, file, url, name }
+        howToReach: {},
+        bestTimeToVisit: [{ months: '', events: '' }]
     })
 
 
@@ -56,7 +58,40 @@ function Page() {
     }
 
 
+    const handleHowToReachChange = (field, value) => {
+        setFormData(prev => ({
+            ...prev,
+            howToReach: {
+                ...prev.howToReach,
+                [field]: value
+            }
+        }))
+    }
 
+    const handleBestTimeChange = (index, field, value) => {
+        setFormData(prev => {
+            const newBestTimeToVisit = [...prev.bestTimeToVisit];
+            newBestTimeToVisit[index] = { ...newBestTimeToVisit[index], [field]: value };
+            return {
+                ...prev,
+                bestTimeToVisit: newBestTimeToVisit
+            };
+        });
+    };
+
+    const addBestTime = () => {
+        setFormData(prev => ({
+            ...prev,
+            bestTimeToVisit: [...prev.bestTimeToVisit, { months: '', events: '' }]
+        }));
+    };
+
+    const removeBestTime = (index) => {
+        setFormData(prev => ({
+            ...prev,
+            bestTimeToVisit: prev.bestTimeToVisit.filter((_, i) => i !== index)
+        }));
+    };
 
     const handleFileUpload = (fileObj) => {
         console.log("File uploaded Object:", fileObj);
@@ -133,8 +168,84 @@ function Page() {
                                         }
                                     />
                                 </div>
-
                             </div>
+
+
+                            <div className='pt-2'>
+                                <div className='pt-4 border-t border-slate-200'>
+                                    <h3 className='text-lg font-semibold text-slate-800 mb-2'>How to Reach</h3>
+                                    <div className='space-y-4'>
+                                        <label className='block'>
+                                            <span className='text-sm font-medium text-slate-700'>By Train</span>
+                                            <textarea
+                                                rows={3}
+                                                value={formData.howToReach.train || ''}
+                                                onChange={(e) => handleHowToReachChange("train", e.target.value)}
+                                                className='mt-2 w-full border rounded-md p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-sky-200'
+                                                placeholder="Details about reaching by train..."
+                                            />
+                                        </label>
+                                        <label className='block'>
+                                            <span className='text-sm font-medium text-slate-700'>By Road</span>
+                                            <textarea
+                                                rows={3}
+                                                value={formData.howToReach.road || ''}
+                                                onChange={(e) => handleHowToReachChange("road", e.target.value)}
+                                                className='mt-2 w-full border rounded-md p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-sky-200'
+                                                placeholder="Details about reaching by road..."
+                                            />
+                                        </label>
+                                        <label className='block'>
+                                            <span className='text-sm font-medium text-slate-700'>By Flight</span>
+                                            <textarea
+                                                rows={3}
+                                                value={formData.howToReach.flight || ''}
+                                                onChange={(e) => handleHowToReachChange("flight", e.target.value)}
+                                                className='mt-2 w-full border rounded-md p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-sky-200'
+                                                placeholder="Details about reaching by flight..."
+                                            />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div className='pt-2' id='best-time-to-visit'>
+                                <div className='pt-4 border-t border-slate-200'>
+                                    <h3 className='text-lg font-semibold text-slate-800 mb-2'>Best Time to Visit</h3>
+                                    <div className='space-y-4'>
+                                        {formData.bestTimeToVisit.map((item, index) => (
+                                            <div key={index} className='grid grid-cols-1 md:grid-cols-12 gap-4 items-start'>
+                                                <div className='md:col-span-4'>
+                                                    <Input
+                                                        placeholder="e.g., Oct-Nov"
+                                                        value={item.months}
+                                                        onChange={(e) => handleBestTimeChange(index, 'months', e.target.value)}
+                                                        className="w-full"
+                                                    />
+                                                </div>
+                                                <div className='md:col-span-7'>
+                                                    <textarea
+                                                        rows={2}
+                                                        value={item.events}
+                                                        onChange={(e) => handleBestTimeChange(index, 'events', e.target.value)}
+                                                        className='w-full border rounded-md p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-sky-200'
+                                                        placeholder="Describe events or conditions..."
+                                                    />
+                                                </div>
+                                                <div className='md:col-span-1 flex items-center'>
+                                                    <button type="button" onClick={() => removeBestTime(index)} className="text-red-500 hover:text-red-700 transition">
+                                                        <X size={20} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        <button type="button" onClick={addBestTime} className="text-sm text-sky-600 hover:text-sky-800 font-medium transition">+ Add more</button>
+                                    </div>
+                                </div>
+                            </div>
+
 
                             <div className='pt-2'>
                                 <button type="submit" className='inline-flex items-center px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-md shadow-sm transition'>

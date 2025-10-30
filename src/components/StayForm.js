@@ -90,7 +90,8 @@ export default function StayForm({ stayId = null, onSuccess = () => { }, fetchUr
                     images: (stayData.images ?? []).map(img => ({ id: img.id, url: img.url, name: img.name })),
                     location: {
                         ...prev.location, // Keep initial structure
-                        ...stayData.location, // Spread fetched location data
+                        ...stayData.location,
+                        district: stayData.location?.district ?? "" // Explicitly set the district
                     },
                     host: {
                         ...prev.host, // Keep initial structure

@@ -19,8 +19,7 @@ function page() {
       })
       const data = await res.json()
       console.log(data)
-      alert("Destination deleted successfully")
-      router.refresh()
+      await getDestinations() // Re-fetch data after deletion
     } catch (error) {
       console.log(error)
       alert("Error deleting destination")
